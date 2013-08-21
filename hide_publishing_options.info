@@ -1,0 +1,4 @@
+; $Id$
+name = Hide Publishing Options
+description = Allows hiding of publishing options on node add/edit form.
+core = 6.x

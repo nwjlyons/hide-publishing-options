@@ -1,0 +1,57 @@
+<?php
+// $Id$
+
+/**
+ * @file
+ * Allows hiding of publishing options on node add/edit form.
+ */
+
+/**
+ * Implementation of hook_form_FORM_ID_alter().
+ */
+function hide_publishing_options_form_node_type_form_alter(&$form, $form_state) {
+  // Publishing options for administrators
+  $form['publishing_fieldset'] = array(
+    '#type' => 'fieldset',
+    '#access' => user_access('administer nodes'),
+    '#title' => t('Publishing options'),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+  );
+  // Publishing options
+  $types = array(
+    'status' => 'Promote',
+    'promote' => 'Promoted to front page',
+    'sticky' => 'Sticky at top of lists',
+  );
+  $form['publishing_fieldset']['publishing_options'] = array(
+    '#type' => 'checkboxes',
+    '#title' => t('Hide'),
+    '#options' => $types,
+    '#default_value' => variable_get('publishing_options_'. $form['#node_type']->type, array('promote', 'sticky')),
+    '#description' => t('Tick to hide publishing option on node add/edit form.'),
+  );
+  // Add submit handler to save publishing options.
+  $form['#submit'][] = 'hide_publishing_options_form_submit';
+}
+
+
+function hide_publishing_options_form_submit($form, &$form_state) {
+  variable_set('hide_publishing_options_'. $form_state['values']['type'], $form_state['values']['publishing_options']);
+}
+
+/**
+ * Hide publishing options on node add/edit form.
+ */
+function hide_publishing_options_form_alter(&$form, $form_state, $form_id) {
+  if (isset($form['#node']) && $form_id == $form['#node']->type .'_node_form') {
+    $publishing_options = variable_get('hide_publishing_options_'. $form['#node']->type, array('promote', 'sticky'));
+    foreach ($publishing_options as $key => $value) {
+      unset($form['options'][$value]);
+    }
+    // Remove fieldset if all options have been removed
+    if ((!isset($form['options']['status'])) && (!isset($form['options']['promote'])) && (!isset($form['options']['sticky']))) {
+      unset($form['options']);
+    }
+  }
+}

@@ -1,0 +1,16 @@
+<?php
+// $Id$
+
+/**
+ * @file
+ * Allows hiding of publishing options on node add/edit form.
+ */
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function hide_publishing_options_uninstall() {
+  foreach (node_get_types('names') as $type => $type_name) {
+    variable_del('hide_publishing_options_'. $type);
+  }
+}

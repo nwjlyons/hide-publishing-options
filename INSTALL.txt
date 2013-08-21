@@ -1,0 +1,7 @@
+; $Id$
+
+Hide Publishing Options
+------------------
+
+To install, place the entire "hide_publishing_options"" folder into your modules directory.
+Go to Administer -> Site building -> Modules and enable the Hide Publishing Options module
